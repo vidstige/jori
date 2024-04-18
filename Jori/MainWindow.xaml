@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Jori"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="MainWindow" Height="450" Width="800"
+        Loaded="Window_Loaded"
+        KeyDown="OnKeyDown"
+        >
+    <Image
+        Name="GameArea"
+        RenderOptions.EdgeMode="Aliased"
+        RenderOptions.BitmapScalingMode="NearestNeighbor"
+        VerticalAlignment="Top"
+        HorizontalAlignment="Left"
+        Stretch="None">
+    </Image>
 </Window>
