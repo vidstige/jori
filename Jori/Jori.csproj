@@ -9,4 +9,12 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\vagabond-idle.aseprite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\vagabond-idle.aseprite" />
+  </ItemGroup>
+
 </Project>
