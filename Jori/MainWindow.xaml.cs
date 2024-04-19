@@ -1,4 +1,5 @@
-﻿using Jori.Engine.Assets;
+﻿using Jori.Engine;
+using Jori.Engine.Assets;
 using System.Data.Common;
 using System.IO;
 using System.Windows;
@@ -12,8 +13,7 @@ namespace Jori
 {
     public partial class MainWindow : Window
     {
-        private readonly DispatcherTimer _timer;
-        private WriteableBitmap _bitmap;
+        private Engine.Engine _engine;
 
         public MainWindow()
         {
@@ -22,24 +22,17 @@ namespace Jori
             // https://theflavare.itch.io/mondstadt-theme-background-pixel-art ?
             // https://thorbjorn.itch.io/tiled?download
             InitializeComponent();
-            _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(40), DispatcherPriority.Normal, Tick, Dispatcher);
+            _engine = new Engine.Engine(32 * 16, 32 * 8, Dispatcher);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _bitmap = new WriteableBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Bgr32, null);
-            GameArea.Source = _bitmap;
-
-            byte[] tile = new byte[32 * 32 * 4]; // B G R
-            for (int i = 0; i < tile.Length; i++) { tile[i] = 128; }
-            _bitmap.WritePixels(new Int32Rect(0, 0, 32, 32), tile, 32 * 4, 0);
+            GameArea.Source = _engine.Buffer;
 
             // load assets
             var uri = new Uri("/Assets/vagabond-idle.aseprite", UriKind.Relative);
             var resource= Application.GetResourceStream(uri);
             AsepriteLoader.Load(new BinaryReader(resource.Stream));
-            //using var file = File.OpenRead("Assets\vagabond\assets\aseprite-files\vagabond-idle.aseprite");
-            //var idle = AsepriteLoader.Load(new BinaryReader(file));
             //_timer.Start();
         }
 

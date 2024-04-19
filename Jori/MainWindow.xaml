@@ -13,8 +13,8 @@
         Name="GameArea"
         RenderOptions.EdgeMode="Aliased"
         RenderOptions.BitmapScalingMode="NearestNeighbor"
-        VerticalAlignment="Top"
-        HorizontalAlignment="Left"
-        Stretch="None">
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Stretch="Uniform">
     </Image>
 </Window>

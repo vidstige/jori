@@ -274,7 +274,7 @@ BYTE[5]     For future (set to zero)
                 ReadFrame(reader, colorDepth);
             }
 
-            return new Sprite();
+            return new Sprite([]);
         }
 
     }
