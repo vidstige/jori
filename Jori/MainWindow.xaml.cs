@@ -12,6 +12,10 @@ namespace Jori
         public int Y;
     }
 
+    public class Game
+    {
+    }
+
     public partial class MainWindow : Window
     {
         private Engine _engine;
@@ -33,14 +37,11 @@ namespace Jori
             // load assets
             var uri = new Uri("/Assets/vagabond-idle.aseprite", UriKind.Relative);
             var resource = Application.GetResourceStream(uri);
-            
+
+            _engine.LoadMap("C:\\Users\\Samuel Carlsson\\source\\repos\\Jori\\Levels\\Mondstadt Tileset Platform - Basic\\basic.tmx");
+
             var idle = AsepriteLoader.Load(new BinaryReader(resource.Stream));
-            //_timer.Start();
-        }
-
-        private void Tick(object? sender, EventArgs e)
-        {
-
+            _engine.Start();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
