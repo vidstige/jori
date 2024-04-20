@@ -1,20 +1,21 @@
-﻿using Jori.Engine;
-using Jori.Engine.Assets;
-using System.Data.Common;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Resources;
-using System.Windows.Threading;
+using WpfEngine;
+using WpfEngine.Assets.Aseprite;
 
 namespace Jori
 {
+    class Player
+    {
+        public int X;
+        public int Y;
+    }
+
     public partial class MainWindow : Window
     {
-        private Engine.Engine _engine;
-
+        private Engine _engine;
+        private Player _player = new Player() { X = 100, Y = 50 };
         public MainWindow()
         {
             // https://pixramen.itch.io/2d-action-platformer-sci-fi-vagabond?download
@@ -22,7 +23,7 @@ namespace Jori
             // https://theflavare.itch.io/mondstadt-theme-background-pixel-art ?
             // https://thorbjorn.itch.io/tiled?download
             InitializeComponent();
-            _engine = new Engine.Engine(32 * 16, 32 * 8, Dispatcher);
+            _engine = new Engine(32 * 16, 32 * 8, Dispatcher);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -31,8 +32,9 @@ namespace Jori
 
             // load assets
             var uri = new Uri("/Assets/vagabond-idle.aseprite", UriKind.Relative);
-            var resource= Application.GetResourceStream(uri);
-            AsepriteLoader.Load(new BinaryReader(resource.Stream));
+            var resource = Application.GetResourceStream(uri);
+            
+            var idle = AsepriteLoader.Load(new BinaryReader(resource.Stream));
             //_timer.Start();
         }
 
@@ -43,7 +45,15 @@ namespace Jori
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-
+            switch (e.Key)
+            {
+                case Key.Left:
+                    _player.X += 5;
+                    break;
+                case Key.Right:
+                    _player.X -= 5;
+                    break;
+            }
         }
     }
 }

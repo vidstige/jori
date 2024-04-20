@@ -1,21 +1,15 @@
-﻿using System;
-using System.CodeDom;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Reflection;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Media.Media3D;
 
-namespace Jori.Engine.Assets
+namespace WpfEngine.Assets.Aseprite
 {
     internal static class BinaryReaderExtension
     {
         public static string ReadAseString(this BinaryReader reader)
         {
             var length = reader.ReadUInt16();
-            var bytes = reader.ReadBytes((int)length);
+            var bytes = reader.ReadBytes(length);
             return Encoding.UTF8.GetString(bytes);
         }
     }
@@ -25,7 +19,7 @@ namespace Jori.Engine.Assets
 
     }
 
-    internal class PaletteChunk: Chunk
+    internal class PaletteChunk : Chunk
     {
         internal const int Type = 0x2019;
 
@@ -49,7 +43,7 @@ namespace Jori.Engine.Assets
         }
     }
 
-    internal class LayerChunk: Chunk
+    internal class LayerChunk : Chunk
     {
         internal const int Type = 0x2004;
         internal static LayerChunk Read(BinaryReader reader)
@@ -68,49 +62,49 @@ namespace Jori.Engine.Assets
                 var tilesetIndex = reader.ReadUInt32();
 
             }
-              /*
-             * WORD        Flags:
-              1 = Visible
-              2 = Editable
-              4 = Lock movement
-              8 = Background
-              16 = Prefer linked cels
-              32 = The layer group should be displayed collapsed
-              64 = The layer is a reference layer
+            /*
+           * WORD        Flags:
+            1 = Visible
+            2 = Editable
+            4 = Lock movement
+            8 = Background
+            16 = Prefer linked cels
+            32 = The layer group should be displayed collapsed
+            64 = The layer is a reference layer
 WORD        Layer type
-              0 = Normal (image) layer
-              1 = Group
-              2 = Tilemap
+            0 = Normal (image) layer
+            1 = Group
+            2 = Tilemap
 WORD        Layer child level (see NOTE.1)
 WORD        Default layer width in pixels (ignored)
 WORD        Default layer height in pixels (ignored)
 WORD        Blend mode (always 0 for layer set)
-              Normal         = 0
-              Multiply       = 1
-              Screen         = 2
-              Overlay        = 3
-              Darken         = 4
-              Lighten        = 5
-              Color Dodge    = 6
-              Color Burn     = 7
-              Hard Light     = 8
-              Soft Light     = 9
-              Difference     = 10
-              Exclusion      = 11
-              Hue            = 12
-              Saturation     = 13
-              Color          = 14
-              Luminosity     = 15
-              Addition       = 16
-              Subtract       = 17
-              Divide         = 18
+            Normal         = 0
+            Multiply       = 1
+            Screen         = 2
+            Overlay        = 3
+            Darken         = 4
+            Lighten        = 5
+            Color Dodge    = 6
+            Color Burn     = 7
+            Hard Light     = 8
+            Soft Light     = 9
+            Difference     = 10
+            Exclusion      = 11
+            Hue            = 12
+            Saturation     = 13
+            Color          = 14
+            Luminosity     = 15
+            Addition       = 16
+            Subtract       = 17
+            Divide         = 18
 BYTE        Opacity
-              Note: valid only if file header flags field has bit 1 set
+            Note: valid only if file header flags field has bit 1 set
 BYTE[3]     For future (set to zero)
 STRING      Layer name
 + If layer type = 2
-  DWORD     Tileset index
-             * */
+DWORD     Tileset index
+           * */
             return new LayerChunk();
         }
     }
@@ -120,7 +114,7 @@ STRING      Layer name
         internal static byte[] Deflate(byte[] compressed)
         {
             using var target = new MemoryStream();
-            using var source= new DeflateStream(new MemoryStream(compressed), CompressionLevel.Optimal);
+            using var source = new DeflateStream(new MemoryStream(compressed), CompressionLevel.Optimal);
             source.CopyTo(target);
             return target.ToArray();
         }
