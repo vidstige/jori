@@ -33,6 +33,7 @@ namespace WpfEngine
 
         private void RenderMap(TileMap map)
         {
+            var rect = new Int32Rect(0, 0, map.TileSize.Width, map.TileSize.Height);
             foreach (var layer in map.Layers)
             {
                 foreach (var chunk in layer.Chunks)
@@ -43,8 +44,6 @@ namespace WpfEngine
                         {
                             var index = (y * chunk.Size.Width) + x; // Assuming the default render order is used which is from right to bottom
                             var gid = chunk.Data[index]; // The tileset tile index
-                            var tileX = (chunk.X + x) * map.TileSize.Width;
-                            var tileY = (chunk.Y + y) * map.TileSize.Height;
 
                             // Gid 0 is used to tell there is no tile set
                             if (gid == 0)
@@ -52,24 +51,14 @@ namespace WpfEngine
                                 continue;
                             }
 
-                            
-                            // Helper method to fetch the right TieldMapTileset instance. 
-                            // This is a connection object Tiled uses for linking the correct tileset to the gid value using the firstgid property.
-                            //var mapTileset = map.GetTiledMapTileset(gid);
-
-                            // Retrieve the actual tileset based on the firstgid property of the connection object we retrieved just now
-                            //var tileset = tilesets[mapTileset.firstgid];
-
-                            // Use the connection object as well as the tileset to figure out the source rectangle.
-                            //var rect = map.GetSourceRect(mapTileset, tileset, gid);
-
-                            // Render sprite at position tileX, tileY using the rect
-
+                            // Render tile
+                            rect.X = (chunk.X + x) * map.TileSize.Width;
+                            rect.Y = (chunk.Y + y) * map.TileSize.Height;
+                            map.BlitTo(_buffer, rect, gid);
                         }
                     }
                 }
             }
-
         }
 
         private void Tick(object? sender, EventArgs e)

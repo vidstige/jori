@@ -1,8 +1,6 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Xml;
 
 namespace WpfEngine.Assets.Tileld
@@ -54,20 +52,34 @@ namespace WpfEngine.Assets.Tileld
         private readonly string _name;
         private readonly int _firstgid;
         private readonly Size _tileSize;
-        private readonly int _tilecount;
+        private readonly uint _count;
         private readonly int _columns;
-        private readonly List<BitmapImage> _images = new List<BitmapImage>();
+        private readonly BitmapSource _image;
 
-        public TileSet(string name, int firstgid, Size tileSize, int tilecount, int columns)
+        public TileSet(string name, int firstgid, Size tileSize, uint count, int columns, BitmapSource image)
         {
             _name = name;
             _firstgid = firstgid;
             _tileSize = tileSize;
-            _tilecount = tilecount;
+            _count = count;
             _columns = columns;
+            _image = image;
+        }
+        public Size TileSize { get { return _tileSize; } }
+        public BitmapSource Image { get { return _image; } }
+
+        public bool Contains(uint gid)
+        {
+            return gid >= _firstgid && gid < _firstgid + _count;
         }
 
-        public List<BitmapImage> Images { get { return _images; } }
+        internal Int32Rect GetSourceRect(uint gid)
+        {
+            var index = (int)(gid - _firstgid);
+            var x = index % _columns;
+            var y = index / _columns;
+            return new Int32Rect(x * _tileSize.Width, y * _tileSize.Height, _tileSize.Width, _tileSize.Height);
+        }
     }
 
     static class XmlElementExtensions
@@ -80,6 +92,15 @@ namespace WpfEngine.Assets.Tileld
                 return 0;
             }
             return Convert.ToInt32(attribute.Value);
+        }
+        public static uint GetUInt32Attribute(this XmlElement node, string name)
+        {
+            var attribute = node.GetAttributeNode(name);
+            if (attribute == null)
+            {
+                return 0;
+            }
+            return Convert.ToUInt32(attribute.Value);
         }
     }
 
@@ -100,27 +121,56 @@ namespace WpfEngine.Assets.Tileld
             _layers = layers;
             _tileSets = tilesets;
         }
+
+        public void BlitTo(WriteableBitmap buffer, Int32Rect rect, uint gid)
+        {
+            foreach (var tileSet in _tileSets)
+            {
+                if (tileSet.Contains(gid))
+                {
+                    // create pixel array for tile
+                    var format = PixelFormats.Bgr32;
+                    var stride = tileSet.TileSize.Width * format.BitsPerPixel / 8;
+                    var pixels = new byte[stride * tileSet.TileSize.Height];
+                    // compute source rect
+                    var sourceRect = tileSet.GetSourceRect(gid);
+                    tileSet.Image.CopyPixels(sourceRect, pixels, stride, 0);
+                    // blit pixels to buffer
+                    if (rect.X >= 0 && rect.Y >= 0 && rect.X + rect.Width <= buffer.PixelWidth && rect.Y + rect.Height <= buffer.PixelHeight)
+                    {
+                        buffer.WritePixels(rect, pixels, stride, 0);
+                    }
+                    return;
+                }
+            }
+
+        }
         
         private static TileSet ReadTileSetContent(int firstgid, XmlElement node, Uri uri)
         {
-            var tileSet = new TileSet(
-                node.GetAttribute("name"),
-                firstgid,
-                new Size() { Width = node.GetInt32Attribute("tilewidth"), Height = node.GetInt32Attribute("tileheight") },
-                node.GetInt32Attribute("tilecount"),
-                node.GetInt32Attribute("columns")
-            );
+            var images = new List<BitmapSource>();
             foreach (XmlElement child in node.ChildNodes)
             {
                 if (child.Name == "image")
                 {
                     var source = child.GetAttribute("source");
                     var imageUri = new Uri(uri, source);
+                    // load image
                     var bitmapImage = new BitmapImage(imageUri);
-                    tileSet.Images.Add(bitmapImage);
+                    // convert it into bgr32
+                    var converted = new FormatConvertedBitmap(bitmapImage, PixelFormats.Bgr32, null, 0);
+                    images.Add(converted);
                 }
             }
-            return tileSet;
+            // TODO combine images if multiple?
+            return new TileSet(
+                node.GetAttribute("name"),
+                firstgid,
+                new Size() { Width = node.GetInt32Attribute("tilewidth"), Height = node.GetInt32Attribute("tileheight") },
+                node.GetUInt32Attribute("tilecount"),
+                node.GetInt32Attribute("columns"),
+                images[0]
+            );
         }
 
         private static TileSet ReadTileSet(XmlElement node, Uri uri)
