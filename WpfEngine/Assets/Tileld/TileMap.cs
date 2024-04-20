@@ -124,6 +124,9 @@ namespace WpfEngine.Assets.Tileld
 
         public void BlitTo(WriteableBitmap buffer, Int32Rect rect, uint gid)
         {
+            bool hflip = (gid & (1 << 31)) != 0;
+            bool vflip = (gid & (1 << 30)) != 0;
+            gid &= ~((1 << 31) + (1 << 30) + (1 << 29)); // clear top three bits
             foreach (var tileSet in _tileSets)
             {
                 if (tileSet.Contains(gid))
@@ -143,7 +146,6 @@ namespace WpfEngine.Assets.Tileld
                     return;
                 }
             }
-
         }
         
         private static TileSet ReadTileSetContent(int firstgid, XmlElement node, Uri uri)
