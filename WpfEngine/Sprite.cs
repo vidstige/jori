@@ -7,7 +7,7 @@ namespace WpfEngine
     {
         private int _width;
         private int _height;
-        private byte[] _pixels; // bgr32
+        private byte[] _pixels; // bgra32
         private TimeSpan _duration;
 
         public Frame(int width, int height, byte[] pixels, TimeSpan timeSpan)

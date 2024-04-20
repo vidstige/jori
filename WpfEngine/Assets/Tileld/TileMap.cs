@@ -129,7 +129,7 @@ namespace WpfEngine.Assets.Tileld
                 if (tileSet.Contains(gid))
                 {
                     // create pixel array for tile
-                    var format = PixelFormats.Bgr32;
+                    var format = PixelFormats.Bgra32;
                     var stride = tileSet.TileSize.Width * format.BitsPerPixel / 8;
                     var pixels = new byte[stride * tileSet.TileSize.Height];
                     // compute source rect
@@ -157,8 +157,8 @@ namespace WpfEngine.Assets.Tileld
                     var imageUri = new Uri(uri, source);
                     // load image
                     var bitmapImage = new BitmapImage(imageUri);
-                    // convert it into bgr32
-                    var converted = new FormatConvertedBitmap(bitmapImage, PixelFormats.Bgr32, null, 0);
+                    // convert it into bgra32
+                    var converted = new FormatConvertedBitmap(bitmapImage, PixelFormats.Bgra32, null, 0);
                     images.Add(converted);
                 }
             }

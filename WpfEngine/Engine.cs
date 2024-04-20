@@ -23,7 +23,7 @@ namespace WpfEngine
             _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
             _timer.Interval = TimeSpan.FromMilliseconds(40); // 25 fps
             _timer.Tick += Tick;
-            _buffer = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr32, null);
+            _buffer = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
         }
 
         public void LoadMap(string path)
