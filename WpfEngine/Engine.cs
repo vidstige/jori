@@ -7,11 +7,6 @@ using WpfEngine.Assets.Tileld;
 
 namespace WpfEngine
 {
-    public interface Blittable
-    {
-        void BlitTo(WriteableBitmap buffer);
-    }
-
     public class Engine
     {
         private readonly DispatcherTimer _timer;

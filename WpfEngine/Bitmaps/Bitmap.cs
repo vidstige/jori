@@ -36,6 +36,7 @@
 
         public void FlipVertically()
         {
+            throw new NotImplementedException();
         }
 
         internal int Index(int bx, int by)
