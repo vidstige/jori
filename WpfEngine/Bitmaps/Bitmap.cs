@@ -30,7 +30,7 @@
 
         public void FlipHorizontally()
         {
-            _strides[0] = _strides[2] - _strides[0]; // start from the other side
+            _strides[0] = _strides[2] - _strides[0] - _strides[1]; // start from the other side
             _strides[1] = -_strides[1];
         }
 
