@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Runtime.CompilerServices;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using WpfEngine.Bitmaps;
@@ -49,6 +50,8 @@ namespace WpfEngine.Assets.Tileld
         private readonly uint _count;
         private readonly int _columns;
         private readonly BitmapSource _image;
+        private readonly Dictionary<uint, Bitmap> _tileCache = new Dictionary<uint, Bitmap>();
+        private static readonly Bitmap Missing = new Bitmap(new Size(0, 0), new byte[0]);
 
         public TileSet(string name, int firstgid, Size tileSize, uint count, int columns, BitmapSource image)
         {
@@ -73,6 +76,36 @@ namespace WpfEngine.Assets.Tileld
             var x = index % _columns;
             var y = index / _columns;
             return new System.Windows.Int32Rect(x * _tileSize.Width, y * _tileSize.Height, _tileSize.Width, _tileSize.Height);
+        }
+
+        public Bitmap GetBitmapTileFor(uint gid)
+        {
+            var bitmap = _tileCache.GetValueOrDefault(gid, Missing);
+            if (bitmap != Missing)
+            {
+                return bitmap;
+            }
+
+            bool hflip = (gid & (1 << 31)) != 0;
+            bool vflip = (gid & (1 << 30)) != 0;
+            gid &= ~((1 << 31) + (1 << 30) + (1 << 29)); // clear top three bits
+
+            // compute source rect
+            var sourceRect = GetSourceRect(gid);
+
+            // create pixel array for tile
+            var format = PixelFormats.Bgra32;
+            var stride = TileSize.Width * format.BitsPerPixel / 8;
+            var pixels = new byte[stride * TileSize.Height];
+            Image.CopyPixels(sourceRect, pixels, stride, 0);
+            bitmap = new Bitmap(_tileSize, pixels);
+            if (hflip) bitmap.FlipHorizontally();
+            if (vflip) bitmap.FlipVertically();
+
+            // store bitmap in cache
+            _tileCache.Add(gid, bitmap);
+
+            return bitmap;
         }
     }
 
@@ -118,31 +151,13 @@ namespace WpfEngine.Assets.Tileld
 
         public void BlitTo(WriteableBitmap buffer, System.Windows.Int32Rect rect, uint gid)
         {
-            bool hflip = (gid & (1 << 31)) != 0;
-            bool vflip = (gid & (1 << 30)) != 0;
-            gid &= ~((1 << 31) + (1 << 30) + (1 << 29)); // clear top three bits
             foreach (var tileSet in _tileSets)
             {
                 if (tileSet.Contains(gid))
                 {
-                    // compute source rect
-                    var sourceRect = tileSet.GetSourceRect(gid);
-
-                    // create pixel array for tile
-                    var format = PixelFormats.Bgra32;
-                    var stride = tileSet.TileSize.Width * format.BitsPerPixel / 8;
-                    var pixels = new byte[stride * tileSet.TileSize.Height];                   
-                    
-                    // TODO: Cache these bitmaps
-                    tileSet.Image.CopyPixels(sourceRect, pixels, stride, 0);
-                    var bitmap = new Bitmap(_tileSize, pixels);
-                    if (hflip) bitmap.FlipHorizontally();
-                    if (vflip) bitmap.FlipVertically();
-
-                    // blit pixels to buffer
+                    var bitmap = tileSet.GetBitmapTileFor(gid);
                     if (rect.X >= 0 && rect.Y >= 0 && rect.X + rect.Width <= buffer.PixelWidth && rect.Y + rect.Height <= buffer.PixelHeight)
                     {
-                        //buffer.WritePixels(rect, pixels, stride, 0);
                         buffer.Blit(rect.X, rect.Y, bitmap);
                     }
                     return;
