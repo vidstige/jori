@@ -50,7 +50,7 @@ namespace WpfEngine.Assets.Tileld
         private readonly uint _count;
         private readonly int _columns;
         private readonly BitmapSource _image;
-        private readonly Dictionary<uint, Bitmap> _tileCache = new Dictionary<uint, Bitmap>();
+        private readonly Dictionary<uint, Bitmap?> _tileCache = new Dictionary<uint, Bitmap?>();
         private static readonly Bitmap Missing = new Bitmap(new Size(0, 0), new byte[0]);
 
         public TileSet(string name, int firstgid, Size tileSize, uint count, int columns, BitmapSource image)
@@ -65,11 +65,6 @@ namespace WpfEngine.Assets.Tileld
         public Size TileSize { get { return _tileSize; } }
         public BitmapSource Image { get { return _image; } }
 
-        public bool Contains(uint gid)
-        {
-            return gid >= _firstgid && gid < _firstgid + _count;
-        }
-
         internal System.Windows.Int32Rect GetSourceRect(uint gid)
         {
             var index = (int)(gid - _firstgid);
@@ -78,20 +73,23 @@ namespace WpfEngine.Assets.Tileld
             return new System.Windows.Int32Rect(x * _tileSize.Width, y * _tileSize.Height, _tileSize.Width, _tileSize.Height);
         }
 
-        public Bitmap GetBitmapTileFor(uint gid)
+        public Bitmap? GetBitmapTileFor(uint gid)
         {
-            var bitmap = _tileCache.GetValueOrDefault(gid, Missing);
-            if (bitmap != Missing)
+            var bitmap = _tileCache.GetValueOrDefault(gid, null);
+            if (bitmap != null)
             {
                 return bitmap;
             }
 
             bool hflip = (gid & (1 << 31)) != 0;
             bool vflip = (gid & (1 << 30)) != 0;
-            gid &= ~((1 << 31) + (1 << 30) + (1 << 29)); // clear top three bits
+            var cleanedGid = gid & ~((1 << 31) + (1 << 30) + (1 << 29)); // clear top three bits
+
+            // return null if this tileset does not contain the gid
+            if (!(cleanedGid >= _firstgid && cleanedGid < _firstgid + _count)) return null;
 
             // compute source rect
-            var sourceRect = GetSourceRect(gid);
+            var sourceRect = GetSourceRect(cleanedGid);
 
             // create pixel array for tile
             var format = PixelFormats.Bgra32;
@@ -153,9 +151,9 @@ namespace WpfEngine.Assets.Tileld
         {
             foreach (var tileSet in _tileSets)
             {
-                if (tileSet.Contains(gid))
+                var bitmap = tileSet.GetBitmapTileFor(gid);
+                if (bitmap != null)
                 {
-                    var bitmap = tileSet.GetBitmapTileFor(gid);
                     if (rect.X >= 0 && rect.Y >= 0 && rect.X + rect.Width <= buffer.PixelWidth && rect.Y + rect.Height <= buffer.PixelHeight)
                     {
                         buffer.Blit(rect.X, rect.Y, bitmap);
