@@ -1,16 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
+using WpfEngine.Bitmaps;
 
 namespace WpfEngine.Assets.Tileld
 {
-    public struct Size
-    {
-        public int Width;
-        public int Height;
-    }
-
     public class Chunk
     {
         private readonly int _x;
@@ -73,12 +67,12 @@ namespace WpfEngine.Assets.Tileld
             return gid >= _firstgid && gid < _firstgid + _count;
         }
 
-        internal Int32Rect GetSourceRect(uint gid)
+        internal System.Windows.Int32Rect GetSourceRect(uint gid)
         {
             var index = (int)(gid - _firstgid);
             var x = index % _columns;
             var y = index / _columns;
-            return new Int32Rect(x * _tileSize.Width, y * _tileSize.Height, _tileSize.Width, _tileSize.Height);
+            return new System.Windows.Int32Rect(x * _tileSize.Width, y * _tileSize.Height, _tileSize.Width, _tileSize.Height);
         }
     }
 
@@ -122,7 +116,7 @@ namespace WpfEngine.Assets.Tileld
             _tileSets = tilesets;
         }
 
-        public void BlitTo(WriteableBitmap buffer, Int32Rect rect, uint gid)
+        public void BlitTo(WriteableBitmap buffer, System.Windows.Int32Rect rect, uint gid)
         {
             bool hflip = (gid & (1 << 31)) != 0;
             bool vflip = (gid & (1 << 30)) != 0;
@@ -137,11 +131,15 @@ namespace WpfEngine.Assets.Tileld
                     var pixels = new byte[stride * tileSet.TileSize.Height];
                     // compute source rect
                     var sourceRect = tileSet.GetSourceRect(gid);
+                    
+                    // TODO: Cache these copies in bitmaps
                     tileSet.Image.CopyPixels(sourceRect, pixels, stride, 0);
+
                     // blit pixels to buffer
                     if (rect.X >= 0 && rect.Y >= 0 && rect.X + rect.Width <= buffer.PixelWidth && rect.Y + rect.Height <= buffer.PixelHeight)
                     {
-                        buffer.WritePixels(rect, pixels, stride, 0);
+                        //buffer.WritePixels(rect, pixels, stride, 0);
+                        buffer.Blit(rect.X, rect.Y, new Bitmaps.Bitmap(_tileSize, pixels));
                     }
                     return;
                 }
