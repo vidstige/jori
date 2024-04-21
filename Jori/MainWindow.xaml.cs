@@ -27,7 +27,7 @@ namespace Jori
             // https://theflavare.itch.io/mondstadt-theme-background-pixel-art ?
             // https://thorbjorn.itch.io/tiled?download
             InitializeComponent();
-            _engine = new Engine(32 * 31, 32 * 21, Dispatcher);
+            _engine = new Engine(32 * 32, 32 * 21, Dispatcher);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

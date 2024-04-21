@@ -125,21 +125,25 @@ namespace WpfEngine.Assets.Tileld
             {
                 if (tileSet.Contains(gid))
                 {
+                    // compute source rect
+                    var sourceRect = tileSet.GetSourceRect(gid);
+
                     // create pixel array for tile
                     var format = PixelFormats.Bgra32;
                     var stride = tileSet.TileSize.Width * format.BitsPerPixel / 8;
-                    var pixels = new byte[stride * tileSet.TileSize.Height];
-                    // compute source rect
-                    var sourceRect = tileSet.GetSourceRect(gid);
+                    var pixels = new byte[stride * tileSet.TileSize.Height];                   
                     
-                    // TODO: Cache these copies in bitmaps
+                    // TODO: Cache these bitmaps
                     tileSet.Image.CopyPixels(sourceRect, pixels, stride, 0);
+                    var bitmap = new Bitmap(_tileSize, pixels);
+                    if (hflip) bitmap.FlipHorizontally();
+                    if (vflip) bitmap.FlipVertically();
 
                     // blit pixels to buffer
                     if (rect.X >= 0 && rect.Y >= 0 && rect.X + rect.Width <= buffer.PixelWidth && rect.Y + rect.Height <= buffer.PixelHeight)
                     {
                         //buffer.WritePixels(rect, pixels, stride, 0);
-                        buffer.Blit(rect.X, rect.Y, new Bitmaps.Bitmap(_tileSize, pixels));
+                        buffer.Blit(rect.X, rect.Y, bitmap);
                     }
                     return;
                 }
