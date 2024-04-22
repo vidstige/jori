@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoriWpf", "JoriWpf\JoriWpf.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfEngine", "WpfEngine\WpfEngine.csproj", "{71434F08-6F25-4D6C-B100-24F2F33242BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoriDX", "JoriDX\JoriDX.csproj", "{4EE050A6-4B75-441A-B381-0234089D4C9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EE050A6-4B75-441A-B381-0234089D4C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EE050A6-4B75-441A-B381-0234089D4C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EE050A6-4B75-441A-B381-0234089D4C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EE050A6-4B75-441A-B381-0234089D4C9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
