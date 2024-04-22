@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jori", "Jori\Jori.csproj", "{B7A680A0-45E2-46A7-B1FE-55E347B2FF08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoriWpf", "JoriWpf\JoriWpf.csproj", "{B7A680A0-45E2-46A7-B1FE-55E347B2FF08}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfEngine", "WpfEngine\WpfEngine.csproj", "{71434F08-6F25-4D6C-B100-24F2F33242BC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoriMono", "JoriMono\JoriMono.csproj", "{99312A0E-BCE8-405B-A24A-7CECD30F1E67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71434F08-6F25-4D6C-B100-24F2F33242BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99312A0E-BCE8-405B-A24A-7CECD30F1E67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99312A0E-BCE8-405B-A24A-7CECD30F1E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99312A0E-BCE8-405B-A24A-7CECD30F1E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99312A0E-BCE8-405B-A24A-7CECD30F1E67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
